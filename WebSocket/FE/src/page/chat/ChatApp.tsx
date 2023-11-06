@@ -205,11 +205,11 @@ const ChatApp = () => {
   console.log(inputMessages.length);
 
   return (
-    <div className="h-screen">
+    <div className="h-[1200px]">
       {!isLogined ? (
         <Login login={login} />
       ) : (
-        <div className={`${style.login} block h-screen overflow-hidden`}>
+        <div className={`${style.login} block h-[1200px] overflow-hidden`}>
           <div className="flex justify-around flex-wrap lg:justify-center items-center relative">
             <div className="flex items-center w-[300px] justify-between">
               <img src={logo} alt="logo" className="h-[100px]" />
