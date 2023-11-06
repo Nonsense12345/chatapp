@@ -181,7 +181,7 @@ const ChatApp = () => {
       })
     );
   };
-  document.documentElement.style.overflow = "hidden";
+  document.documentElement.style.overflowX = "hidden";
   useEffect(() => {
     const element = document.getElementById("scrollbar");
     if (element) {
@@ -202,6 +202,7 @@ const ChatApp = () => {
       setFile(inputFile.files[0]);
     }
   };
+  console.log(inputMessages.length);
 
   return (
     <div>
@@ -209,22 +210,38 @@ const ChatApp = () => {
         <Login login={login} />
       ) : (
         <div className={`${style.login} block h-screen overflow-hidden`}>
-          <div className="h-[200px] flex justify-center items-center">
+          <div className="h-[140px] flex justify-around flex-wrap lg:justify-center items-center relative">
             <div className="flex items-center w-[300px] justify-between">
               <img src={logo} alt="logo" className="h-[100px]" />
               <h1 className="text-[3em]">Chat App</h1>
             </div>
+            <div className="lg:absolute top-[20px] right-[50px] flex items-center">
+              <div className="mr-[10px] border-[2px] border-solid border-[#3d91ff] rounded-xl">
+                <img
+                  src={photoImg}
+                  alt="logo"
+                  className="h-[60px] w-[60px] rounded-xl object-cover"
+                />
+              </div>
+              <div
+                onClick={() => setIsLogined(false)}
+                className="text-[#f3e5fe] hover:text-white transition-all duration-200 ease-in-out cursor-pointer"
+              >
+                <div>{UserName}</div>
+                <div>Đăng Xuất</div>
+              </div>
+            </div>
           </div>
-          <div className="w-full flex justify-center h-[480px] 2xl:h-[600px]  ">
+          <div className="w-full flex justify-center h-[500px] 2xl:h-[680px]  ">
             <div
               className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate `}
             >
-              <div className="h-[90%] overflow-auto" id="scrollbar">
+              <div className="h-[80%] overflow-auto" id="scrollbar">
                 {messages &&
                   messages.map((item: validateDataMess) => (
                     <div key={item.time}>
                       {item.username === UserName ? (
-                        <div className="flex items-start justify-end  my-[10px]">
+                        <div className="flex items-start justify-end  my-[6px]">
                           <div className="flex items-center justify-end">
                             <span className="mx-[20px] opacity-50 text-[14px]">
                               {dayjs(item.time).format("hh:mm - DD/MM/YYYY")}
@@ -249,7 +266,7 @@ const ChatApp = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex items-start   my-[10px]">
+                        <div className="flex items-start   my-[6px]">
                           <div className="mx-[10px] ">
                             <img
                               src={
@@ -277,10 +294,10 @@ const ChatApp = () => {
                     </div>
                   ))}
               </div>
-              <div className=" flex items-center h-[10%] border-t-[1px] border-[#f9f9f9] w-[100%] ">
-                <div className="flex w-full  items-center bg-white  mx-[20px] p-[10px]  rounded-xl h-[40px] 2xl:h-[50px]">
+              <div className=" flex items-center h-[20%] border-t-[1px] border-[#f9f9f9] w-[100%] ">
+                <div className="flex w-full lg:flex-row flex-col  items-center  bg-white  mx-[20px] p-[10px]  rounded-xl h-auto">
                   {file?.name ? (
-                    <div className="bg-red-400 h-[30px] rounded-2xl  px-[10px] py-[2px] flex">
+                    <div className="bg-red-400 h-[30px] rounded-2xl lg:flex hidden  px-[10px] py-[2px]  ">
                       <span className="line-clamp-1">{file?.name}</span>
                       <i
                         className="bi bi-x text-white text-[20px] cursor-pointer"
@@ -291,23 +308,35 @@ const ChatApp = () => {
                     ""
                   )}
 
-                  <input
+                  <textarea
                     value={inputMessages}
                     placeholder="Messages ..."
                     onChange={(e) => {
                       setInputMessages(e.target.value);
                     }}
-                    onKeyDown={(e) => {
+                    onKeyUp={(e) => {
                       if (e.key === "Enter") {
                         setInputMessages("");
                         sendMessaged();
+                        setFile(undefined);
                       }
                     }}
-                    className="w-4/5  rounded-l-full  text-black outline-none pl-[10px]"
+                    className="w-4/5    text-black outline-none pl-[10px] resize-none "
                   />
 
                   <div className="flex w-auto xl:w-[20%] justify-end">
-                    <div className=" rounded-full  flex justify-center items-center">
+                    {file?.name ? (
+                      <div className="bg-red-400 h-[30px] rounded-2xl lg:hidden flex  px-[10px] py-[2px]  ">
+                        <span className="line-clamp-1">{file?.name}</span>
+                        <i
+                          className="bi bi-x text-white text-[20px] cursor-pointer"
+                          onClick={() => setFile(undefined)}
+                        ></i>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                    <div className=" rounded-full  flex justify-center items-center mx-[10px]">
                       <label htmlFor="files" className="text-black">
                         <i className="bg-[#3d91ff] hover:opacity-80 flex justify-center items-center w-[30px] h-[30px] rounded-full bi bi-plus  text-white text-[26px]"></i>
                       </label>
@@ -319,11 +348,12 @@ const ChatApp = () => {
                       />
                     </div>
                     <div
-                      className={`flex items-center border-[2px] border-solid border-[#3d91ff]  rounded-full w-[60px] justify-center ml-[10px] hover:opacity-90 overflow-hidden ${style.send}`}
+                      className={`flex items-center border-[2px] border-solid border-[#3d91ff]  rounded-full w-[60px] justify-center  hover:opacity-90 overflow-hidden ${style.send}`}
                       onClick={() => {
                         if (inputMessages.trim() !== "" || file) {
                           setInputMessages("");
                           sendMessaged();
+                          setFile(undefined);
                         }
                       }}
                     >
