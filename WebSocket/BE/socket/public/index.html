@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <style>
+      #chat-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-bottom: 10px;
+        height: 300px;
+        overflow-y: scroll;
+      }
+      #controls {
+        display: flex;
+      }
+      #message-input {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="chat-box"></div>
+      <div id="controls">
+        <input type="text" id="name" class="form-control" placeholder="Name" />
+        <input
+          type="text"
+          id="message-input"
+          class="form-control"
+          placeholder="Message"
+        />
+        <button onclick="sendMessage()" class="btn btn-primary">Send</button>
+      </div>
+    </div>
+
+    <script>
+      var ws = new WebSocket("ws://localhost:8080/ws");
+      ws.onmessage = function (event) {
+        var update = JSON.parse(event.data);
+        var chatBox = document.getElementById("chat-box");
+        switch (update.type) {
+          case "ADD_MESSAGE":
+            chatBox.innerHTML +=
+              `<img src="${update.user.Photo}" width="30" height="30" >` +
+              JSON.stringify(update.message.message) +
+              "<br>";
+            break;
+          case "EDIT_MESSAGE":
+            var messageDiv = document.getElementById(
+              "message-" + update.message.uid
+            );
+            messageDiv.innerHTML =
+              update.message.message +
+              ' <button onclick="editMessage(' +
+              update.message.uid +
+              ')">Edit</button>' +
+              ' <button onclick="deleteMessage(' +
+              update.message.uid +
+              ')">Delete</button>';
+            break;
+          case "DELETE_MESSAGE":
+            var messageDiv = document.getElementById(
+              "message-" + update.message.uid
+            );
+            messageDiv.remove();
+            break;
+          case "USER_JOIN":
+            chatBox.innerHTML +=
+              '<div id="message-' + update.message.uid + '">';
+            JSON.stringify(update) + " joined" + "</div>";
+          case "USER_LEAVE":
+            chatBox.innerHTML +=
+              update.user.remoteAddr +
+              (update.type === "USER_JOIN" ? " joined" : " left") +
+              "<br>";
+            break;
+          default:
+            console.log("Unknown update type:", update.type);
+        }
+      };
+
+      function editMessage(uid) {
+        var newMessage = prompt("Edit your message:");
+        if (newMessage) {
+          ws.send(
+            JSON.stringify({
+              type: "EDIT_MESSAGE",
+              message: {
+                uid: uid,
+                message: newMessage,
+                time: new Date(),
+              },
+            })
+          );
+        }
+      }
+
+      function deleteMessage(uid) {
+        if (confirm("Are you sure you want to delete this message?")) {
+          ws.send(
+            JSON.stringify({
+              type: "DELETE_MESSAGE",
+              message: {
+                uid: uid,
+              },
+            })
+          );
+        }
+      }
+      function sendMessage() {
+        var name = document.getElementById("name").value;
+        var message = document.getElementById("message-input").value;
+        ws.send(
+          JSON.stringify({
+            type: "ADD_MESSAGE",
+            user: {
+              username: name,
+              photo:
+                "https://i1.sndcdn.com/avatars-RRGLShuXxo0UaNkq-Ccb9yg-t500x500.jpg",
+            },
+            message: {
+              username: name,
+              message: message,
+              time: new Date(),
+            },
+          })
+        );
+        document.getElementById("message-input").value = "";
+      }
+    </script>
+  </body>
+</html>

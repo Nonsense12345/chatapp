@@ -1,0 +1,79 @@
+//Định dạng json để giao tiếp với websocket
+
+1. AddMessage
+{
+  "type": "ADD_MESSAGE",
+  "user": {
+    "UserName": "exampleUser",
+    "Photo": "path/to/photo.jpg"
+  },
+  "message": {
+    "time": "2023-04-05T14:48:00.000Z",
+    "message": "This is a message"
+  }
+}
+
+
+2. EditMessage
+{
+  "type": "EDIT_MESSAGE",
+  "user": {
+    "UserName": "exampleUser"
+  },
+  "message": {
+    "mesid": 1,
+    "message": "This is an edited message"
+  }
+}
+
+3. DeleteMessage
+
+{
+  "type": "DELETE_MESSAGE",
+  "user": {
+    "UserName": "exampleUser"
+  },
+  "message": {
+    "mesid": 1
+  }
+}
+
+4. UserJoin
+Lúc mới vào chat cần nhập username với link ảnh thì dùng type này
+
+{
+  "type": "USER_JOIN",
+  "user": {
+    "UserName": "newUser",
+    "Photo": "path/to/photo.jpg"
+  }
+}
+
+
+6. UpFile
+
+Upfile lên server nó tự động phân tích đuôi file để xếp mimetype rồi up lên server, server sẽ gửi lại cấu trúc json y như dưới 
+
+{
+  "type": "UpFile",
+  "user": {
+    "UserName": "exampleUser"
+  },
+  "message": {
+    "time": "2023-04-05T14:48:00.000Z",
+    "message": "Uploaded a file",
+    "File": {
+      "MimeType": "image/jpeg",
+      "FileName": "example.jpg",
+      "Link: url // Trường dành riêng cho server trả lại tất cả client
+      "Data": "base64EncodedString"
+    }
+  }
+}
+
+API:
+
+/getallmessage  : Lấy tất cả thông tin tin nhắn từ đầu tới giờ
+/allusers	: Lấy tất cả thông tin của tất cả user bao gồm tin nhắn
+
+
