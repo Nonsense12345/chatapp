@@ -1,10 +1,12 @@
+
+
 .login {
   display: flex;
   justify-content: center;
   background: #fc466b; /* fallback for old browsers */
   background: -webkit-linear-gradient(-45deg, #fc466b, #3f5efb);
   background: linear-gradient(-45deg, #fc466b, #3f5efb);
-  height: 100vh;
+  height: 100%;
   color: white;
   .login_avar {
     top: 40px;
