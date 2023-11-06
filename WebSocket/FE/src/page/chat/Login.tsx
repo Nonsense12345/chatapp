@@ -22,7 +22,7 @@ const Login: React.FC<PropLogin> = ({ login }) => {
       <div className={style.login_avar}>
         <h2 className="font-semibold text-[2em]">Chat App</h2>
       </div>
-      <div className={`${style.box} `}>
+      <div className={`${style.box} mt-[-320px]`}>
         <form>
           <h1 className="font-semibold text-[2em]">User</h1>
           <div className={style.inputBox}>
