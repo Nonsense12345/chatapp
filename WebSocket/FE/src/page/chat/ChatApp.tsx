@@ -37,7 +37,7 @@ const ChatApp = () => {
     console.log("Messages state changed:", messages);
   }, [messages]);
 
-  const { sendMessage } = useWebSocket("wss://178.128.113.167/ws", {
+  const { sendMessage } = useWebSocket("wss://chat.catim.pp.ua/ws", {
     onMessage: (e) => {
       const res = JSON.parse(e.data);
       console.log(res);
