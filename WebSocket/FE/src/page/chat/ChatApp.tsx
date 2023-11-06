@@ -1,5 +1,5 @@
 // import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/img/logo.png";
 import useWebSocket from "react-use-websocket";
 import style from "./style.module.scss";
@@ -37,7 +37,7 @@ const ChatApp = () => {
     console.log("Messages state changed:", messages);
   }, [messages]);
 
-  const { sendMessage } = useWebSocket("ws://localhost:8080/ws", {
+  const { sendMessage } = useWebSocket("ws://178.128.113.167/ws", {
     onMessage: (e) => {
       const res = JSON.parse(e.data);
       console.log(res);
@@ -59,7 +59,7 @@ const ChatApp = () => {
     console.log(mime_type);
 
     console.log(mime_type);
-    const src = "http://localhost:8080" + link || "";
+    const src = "http://178.128.113.167" + link || "";
 
     if (mime_type.includes("image")) {
       return <img src={src} alt="" width={500} height={500} />;
@@ -118,7 +118,7 @@ const ChatApp = () => {
           message: inputMessages,
         })
       );
-      fetch("http://localhost:8080/upload", {
+      fetch("http://178.128.113.167/upload", {
         method: "POST",
         body: formData,
       })
@@ -152,7 +152,7 @@ const ChatApp = () => {
   };
   const getData = async () => {
     if (isLogined) {
-      const res = await axios.get("http://localhost:8080/allmessages");
+      const res = await axios.get("http://178.128.113.167/allmessages");
       console.log(res);
 
       if (res.data) {
