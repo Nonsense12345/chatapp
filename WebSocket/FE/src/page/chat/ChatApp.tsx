@@ -205,12 +205,12 @@ const ChatApp = () => {
   console.log(inputMessages.length);
 
   return (
-    <div className="h-[1200px]">
+    <div className="h-screen">
       {!isLogined ? (
         <Login login={login} />
       ) : (
-        <div className={`${style.login} block h-full overflow-hidden`}>
-          <div className="h-[200px] flex justify-around flex-wrap lg:justify-center items-center relative">
+        <div className={`${style.login} block h-screen overflow-hidden`}>
+          <div className="flex justify-around flex-wrap lg:justify-center items-center relative">
             <div className="flex items-center w-[300px] justify-between">
               <img src={logo} alt="logo" className="h-[100px]" />
               <h1 className="text-[3em]">Chat App</h1>
@@ -232,9 +232,9 @@ const ChatApp = () => {
               </div>
             </div>
           </div>
-          <div className="w-full flex justify-center h-[500px] 2xl:h-[680px]  ">
+          <div className="w-full mt-[20px] flex justify-center h-[80vh] ">
             <div
-              className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate `}
+              className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
             >
               <div className="h-[80%] overflow-auto" id="scrollbar">
                 {messages &&
@@ -294,8 +294,8 @@ const ChatApp = () => {
                     </div>
                   ))}
               </div>
-              <div className=" flex items-center h-[20%] border-t-[1px] border-[#f9f9f9] w-[100%] ">
-                <div className="flex w-full lg:flex-row flex-col  items-center  bg-white  mx-[20px] p-[10px]  rounded-xl h-auto">
+              <div className=" flex items-center h-[15%]   py-[10px]  border-[#f9f9f9] w-[100%] ">
+                <div className="flex w-full lg:flex-row flex-col  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl">
                   {file?.name ? (
                     <div className="bg-red-400 h-[30px] rounded-2xl lg:flex hidden  px-[10px] py-[2px]  ">
                       <span className="line-clamp-1">{file?.name}</span>
@@ -308,7 +308,7 @@ const ChatApp = () => {
                     ""
                   )}
 
-                  <textarea
+                  <input
                     value={inputMessages}
                     placeholder="Messages ..."
                     onChange={(e) => {
