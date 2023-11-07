@@ -298,12 +298,6 @@ const ChatApp = () => {
                               </p>
                               <p className="">{item.message}</p>
                               {item.File && renderContentByMimeType(item)}
-                              {item.File && (
-                                <progress
-                                  value={uploadProgress}
-                                  max={totalSize}
-                                ></progress>
-                              )}
                             </span>
                             <span className="mx-[20px] opacity-50 text-[14px]">
                               {dayjs(item.time).format("hh:mm - DD/MM/YYYY")}
@@ -313,6 +307,11 @@ const ChatApp = () => {
                       )}
                     </div>
                   ))}
+              </div>
+              <div>
+                {item.File && uploadProgress != totalSize && (
+                  <progress value={uploadProgress} max={totalSize}></progress>
+                )}
               </div>
               <div className=" flex items-center h-[15%]   py-[10px]  border-[#f9f9f9] w-[100%] ">
                 <div className="flex w-full lg:flex-row flex-col  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl">
