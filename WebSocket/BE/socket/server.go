@@ -38,7 +38,7 @@ var mesMap = make(map[int64]Message)
 func Upfile(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("hello")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	err := r.ParseMultipartForm(10 << 20)
+	err := r.ParseMultipartForm(10 << 50)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
