@@ -241,9 +241,15 @@ const ChatApp = () => {
       ) : (
         <div className={`${style.login} block h-[1200px] overflow-hidden`}>
           <div className="flex justify-around flex-wrap lg:justify-center items-center relative">
-            <div className="flex items-center w-[300px] justify-between">
-              <img src={logo} alt="logo" className="h-[100px] mt-[20px]" />
-              <h1 className="text-[3em]">Chat App</h1>
+            <div className="flex items-center w-[300px] justify-center">
+              <img
+                src={logo}
+                alt="logo"
+                className="h-[50px] lg:h-[100px] mt-[20px]"
+              />
+              <h1 className="text-[1.5em] md:text-[2.5em]  lg:text-[3em]">
+                Chat App
+              </h1>
             </div>
             <div className="lg:absolute top-[20px] right-[50px] flex items-center">
               <div className="mr-[10px] border-[2px] border-solid border-[#3d91ff] rounded-xl">
