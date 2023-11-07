@@ -4,21 +4,21 @@ import logo from "../../assets/img/logo.png";
 import useWebSocket from "react-use-websocket";
 import style from "./style.module.scss";
 import Login from "./Login";
-import cat from "../../assets/img/cat.jpg";
-import angry from "../../assets/img/angry.jpg";
-import cry from "../../assets/img/Cry.jpg";
-import cry2 from "../../assets/img/cry2.png";
-import dam from "../../assets/img/dam.jpg";
-import dog from "../../assets/img/dog.png";
-import dog2 from "../../assets/img/dog2.jpg";
-import fuck from "../../assets/img/fuck.jpg";
-import game from "../../assets/img/game.png";
-import like from "../../assets/img/like.png";
-import namo from "../../assets/img/namo.jpg";
-import sad from "../../assets/img/sad.jpg";
-import shoot from "../../assets/img/shoot.png";
-import smart from "../../assets/img/smart.jpg";
-import haha from "../../assets/img/haha.jpg";
+// import cat from "../../assets/img/cat.jpg";
+// import angry from "../../assets/img/angry.jpg";
+// import cry from "../../assets/img/Cry.jpg";
+// import cry2 from "../../assets/img/cry2.png";
+// import dam from "../../assets/img/dam.jpg";
+// import dog from "../../assets/img/dog.png";
+// import dog2 from "../../assets/img/dog2.jpg";
+// import fuck from "../../assets/img/fuck.jpg";
+// import game from "../../assets/img/game.png";
+// import like from "../../assets/img/like.png";
+// import namo from "../../assets/img/namo.jpg";
+// import sad from "../../assets/img/sad.jpg";
+// import shoot from "../../assets/img/shoot.png";
+// import smart from "../../assets/img/smart.jpg";
+// import haha from "../../assets/img/haha.jpg";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import axios from "axios";
@@ -43,23 +43,23 @@ interface validateDataMess {
 }
 
 const ChatApp = () => {
-  const listMeme = useRef<string[]>([
-    cat,
-    angry,
-    cry,
-    cry2,
-    haha,
-    dam,
-    dog,
-    dog2,
-    fuck,
-    game,
-    namo,
-    like,
-    shoot,
-    smart,
-    sad,
-  ]);
+  // const listMeme = useRef<string[]>([
+  //   cat,
+  //   angry,
+  //   cry,
+  //   cry2,
+  //   haha,
+  //   dam,
+  //   dog,
+  //   dog2,
+  //   fuck,
+  //   game,
+  //   namo,
+  //   like,
+  //   shoot,
+  //   smart,
+  //   sad,
+  // ]);
   const listIcon = useRef<string[]>([
     "😀",
     "😃",
@@ -111,10 +111,6 @@ const ChatApp = () => {
   }, [messages]);
 
   const { sendMessage } = useWebSocket("wss://chat.catim.pp.ua/ws", {
-    onError: (e) => {
-      toast.error("Can Not Connect to server");
-    },
-
     onMessage: (e) => {
       const res = JSON.parse(e.data);
       console.log(res);
@@ -127,6 +123,9 @@ const ChatApp = () => {
       } else if (res.type === "USER_JOIN" && isLogined) {
         toast.success(res.user.UserName + " joined");
       }
+    },
+    onError: () => {
+      toast.error("Can Not Connect to server");
     },
   });
   function renderContentByMimeType(item: validateDataMess) {
