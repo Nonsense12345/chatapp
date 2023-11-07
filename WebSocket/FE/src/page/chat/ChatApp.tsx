@@ -30,6 +30,8 @@ const ChatApp = () => {
   const [isLogined, setIsLogined] = useState<boolean>(false);
   const [inputMessages, setInputMessages] = useState<string>("");
   const [UserName, setUserName] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [totalSize, setTotalSize] = useState(0);
   const [file, setFile] = useState<File>();
 
   const [photoImg, setPhotoImg] = useState<string>("");
@@ -98,6 +100,7 @@ const ChatApp = () => {
   const sendMessaged = () => {
     if (file) {
       const formData = new FormData();
+      setTotalSize(file.size);
       formData.append("file", file);
       formData.append(
         "user",
@@ -118,9 +121,12 @@ const ChatApp = () => {
           message: inputMessages,
         })
       );
+
+      const controller = new AbortController();
       fetch("https://chat.catim.pp.ua/upload", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       })
         .then((response) => response.text())
         .then((result) => {
@@ -129,6 +135,14 @@ const ChatApp = () => {
         .catch((error) => {
           console.error("Error:", error);
         });
+      const reader = file.stream().getReader();
+      let bytesUpload = 0;
+      reader.read().then(function progress(done, value) {
+        if (done) controller.abort;
+        bytesUpload += value.length;
+        setUploadProgress((bytesUpload / totalSize) * 100);
+        reader.read().then(progress);
+      });
     } else {
       const avar =
         photoImg.trim() !== ""
@@ -284,6 +298,12 @@ const ChatApp = () => {
                               </p>
                               <p className="">{item.message}</p>
                               {item.File && renderContentByMimeType(item)}
+                              {item.File && (
+                                <progress
+                                  value={uploadProgress}
+                                  max={totalSize}
+                                ></progress>
+                              )}
                             </span>
                             <span className="mx-[20px] opacity-50 text-[14px]">
                               {dayjs(item.time).format("hh:mm - DD/MM/YYYY")}
