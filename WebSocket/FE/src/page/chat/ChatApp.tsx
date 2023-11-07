@@ -26,6 +26,7 @@ interface validateDataMess {
 
 const ChatApp = () => {
   //const [dataFiles, setDataFiles] = useState<FileData>();
+  const [done, setDone] = useState(true);
   const [messages, setMessages] = useState<validateDataMess[]>([]);
   const [isLogined, setIsLogined] = useState<boolean>(false);
   const [inputMessages, setInputMessages] = useState<string>("");
@@ -101,6 +102,7 @@ const ChatApp = () => {
     if (file) {
       const formData = new FormData();
       setTotalSize(file.size);
+      console.log("filesize :" + file.size);
       formData.append("file", file);
       formData.append(
         "user",
@@ -135,14 +137,22 @@ const ChatApp = () => {
         .catch((error) => {
           console.error("Error:", error);
         });
+      setDone(false);
       const reader = file.stream().getReader();
-      let bytesUpload = 0;
-      reader.read().then(function progress(done, value) {
-        if (done) controller.abort;
-        bytesUpload += value.length;
-        setUploadProgress((bytesUpload / totalSize) * 100);
-        reader.read().then(progress);
-      });
+      function progress({ done, value }) {
+        if (done) setDone(true);
+        if (value) {
+          setUploadProgress((oldProgress) => {
+            const newProgress = oldProgress + value.length;
+            console.log(`Uploaded ${newProgress} of ${totalSize}`);
+            return newProgress;
+          });
+        }
+        if (!done) {
+          reader.read().then(progress);
+        }
+      }
+      reader.read().then(progress);
     } else {
       const avar =
         photoImg.trim() !== ""
@@ -217,7 +227,9 @@ const ChatApp = () => {
     }
   };
   console.log(inputMessages.length);
-
+  window.addEventListener("offline", function (e) {
+    toast.warn("Mất kết nối mạng, WebSocket có thể đã bị đóng.");
+  });
   return (
     <div className="h-[1200px]">
       {!isLogined ? (
@@ -309,8 +321,17 @@ const ChatApp = () => {
                   ))}
               </div>
               <div>
-                {item.File && uploadProgress != totalSize && (
-                  <progress value={uploadProgress} max={totalSize}></progress>
+                {!done && (
+                  <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+                    <div
+                      className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                      style={{
+                        width: `${(uploadProgress / totalSize) * 100}%`,
+                      }}
+                    >
+                      {uploadProgress}/{totalSize}
+                    </div>
+                  </div>
                 )}
               </div>
               <div className=" flex items-center h-[15%]   py-[10px]  border-[#f9f9f9] w-[100%] ">
