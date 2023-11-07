@@ -242,7 +242,7 @@ const ChatApp = () => {
         <div className={`${style.login} block h-[1200px] overflow-hidden`}>
           <div className="flex justify-around flex-wrap lg:justify-center items-center relative">
             <div className="flex items-center w-[300px] justify-between">
-              <img src={logo} alt="logo" className="h-[100px]" />
+              <img src={logo} alt="logo" className="h-[100px] mt-[20px]" />
               <h1 className="text-[3em]">Chat App</h1>
             </div>
             <div className="lg:absolute top-[20px] right-[50px] flex items-center">
@@ -262,7 +262,7 @@ const ChatApp = () => {
               </div>
             </div>
           </div>
-          <div className="w-full mt-[20px] flex justify-center h-[80vh] ">
+          <div className="w-full mt-[60px] flex justify-center h-[80vh] ">
             <div
               className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
             >
@@ -341,7 +341,7 @@ const ChatApp = () => {
               <div className=" flex items-center h-[15%]   py-[10px]  border-[#f9f9f9] w-[100%] ">
                 <div className="flex w-full lg:flex-row flex-col  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl">
                   {file?.name ? (
-                    <div className="bg-red-400 h-[30px] rounded-2xl lg:flex hidden  px-[10px] py-[2px]  ">
+                    <div className="bg-red-400 h-[30px] rounded-2xl lg:flex hidden  px-[10px] py-[2px] max-w-[100px] ">
                       <span className="line-clamp-1">{file?.name}</span>
                       <i
                         className="bi bi-x text-white text-[20px] cursor-pointer"
@@ -368,9 +368,9 @@ const ChatApp = () => {
                     className="w-4/5    text-black outline-none pl-[10px] resize-none "
                   />
 
-                  <div className="flex w-auto xl:w-[20%] justify-end">
+                  <div className="flex w-auto xl:w-[20%] justify-end flex-col">
                     {file?.name ? (
-                      <div className="bg-red-400 h-[30px] rounded-2xl lg:hidden flex  px-[10px] py-[2px]  ">
+                      <div className="bg-red-400 h-[30px] rounded-2xl lg:hidden flex  px-[10px] py-[2px] mb-[10px] ">
                         <span className="line-clamp-1">{file?.name}</span>
                         <i
                           className="bi bi-x text-white text-[20px] cursor-pointer"
@@ -380,31 +380,33 @@ const ChatApp = () => {
                     ) : (
                       ""
                     )}
-                    <div className=" rounded-full  flex justify-center items-center mx-[10px]">
-                      <label htmlFor="files" className="text-black">
-                        <i className="bg-[#3d91ff] hover:opacity-80 flex justify-center items-center w-[30px] h-[30px] rounded-full bi bi-plus  text-white text-[26px]"></i>
-                      </label>
-                      <input
-                        id="files"
-                        type="file"
-                        onChange={handleFileChange}
-                        className={` z-[-1] absolute opacity-0`}
-                      />
-                    </div>
-                    <div
-                      className={`flex items-center border-[2px] border-solid border-[#3d91ff]  rounded-full w-[60px] justify-center  hover:opacity-90 overflow-hidden ${style.send}`}
-                      onClick={() => {
-                        if (inputMessages.trim() !== "" || file) {
-                          setInputMessages("");
-                          sendMessaged();
-                          setFile(undefined);
-                        }
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <i
-                          className={`bi bi-send text-[14px] img1 text-[#3d91ff]  ${style.imgSend}`}
-                        ></i>
+                    <div className="flex justify-center lg:justify-end">
+                      <div className=" rounded-full  flex justify-center items-center mx-[10px]">
+                        <label htmlFor="files" className="text-black">
+                          <i className="bg-[#3d91ff] hover:opacity-80 flex justify-center items-center w-[30px] h-[30px] rounded-full bi bi-plus  text-white text-[26px]"></i>
+                        </label>
+                        <input
+                          id="files"
+                          type="file"
+                          onChange={handleFileChange}
+                          className={` z-[-1] absolute opacity-0`}
+                        />
+                      </div>
+                      <div
+                        className={`flex items-center border-[2px] border-solid border-[#3d91ff]  rounded-full w-[60px] justify-center  hover:opacity-90 overflow-hidden ${style.send}`}
+                        onClick={() => {
+                          if (inputMessages.trim() !== "" || file) {
+                            setInputMessages("");
+                            sendMessaged();
+                            setFile(undefined);
+                          }
+                        }}
+                      >
+                        <div className="flex">
+                          <i
+                            className={`bi bi-send text-[14px] img1 text-[#3d91ff]  ${style.imgSend}`}
+                          ></i>
+                        </div>
                       </div>
                     </div>
                   </div>
