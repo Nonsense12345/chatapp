@@ -8,6 +8,10 @@ import Login from "./Login";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import axios from "axios";
+interface ReadResult {
+  done: boolean;
+  value?: Uint8Array;
+}
 
 interface validateDataMess {
   mesid: string;
@@ -139,7 +143,7 @@ const ChatApp = () => {
         });
       setDone(false);
       const reader = file.stream().getReader();
-      function progress({ done, value }) {
+      function progress({ done, value }: ReadResult) {
         if (done) setDone(true);
         if (value) {
           setUploadProgress((oldProgress) => {
@@ -149,7 +153,7 @@ const ChatApp = () => {
           });
         }
         if (!done) {
-          reader.read().then(progress);
+          reader.read().then(progress as (result: ReadResult) => void);
         }
       }
       reader.read().then(progress);
@@ -227,7 +231,7 @@ const ChatApp = () => {
     }
   };
   console.log(inputMessages.length);
-  window.addEventListener("offline", function (e) {
+  window.addEventListener("offline", function () {
     toast.warn("Mất kết nối mạng, WebSocket có thể đã bị đóng.");
   });
   return (
