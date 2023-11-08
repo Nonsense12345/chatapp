@@ -161,7 +161,14 @@ const ChatApp = () => {
         </video>
       );
     } else if (mime_type.includes("text")) {
-      return <iframe src={src} title="text-content" width={320} height={320} />;
+      return (
+        <iframe
+          src={src}
+          title="text-content"
+          height={300}
+          className="w-[100px] sm:w-[180px] md:w-[250px] xl:w-[300px]"
+        />
+      );
     } else if (mime_type.trim() === "") {
       return "";
     } else {
@@ -379,7 +386,7 @@ const ChatApp = () => {
                             <span className="mx-[20px] opacity-50 text-[14px]">
                               {dayjs(item.time).format("hh:mm - DD/MM/YYYY")}
                             </span>
-                            <span className="max-w-[200px] sm:max-w-[600px] xl:max-w-[800px] bg-[#3d91ff] break-words rounded-2xl px-[14px] py-[6px] ">
+                            <span className="overflow-auto max-w-[200px] sm:max-w-[600px] xl:max-w-[800px] bg-[#3d91ff] break-words rounded-2xl px-[14px] py-[6px] ">
                               <p className="text-[12px] opacity-90 text-right">
                                 {item.username}
                               </p>
@@ -411,7 +418,7 @@ const ChatApp = () => {
                             />
                           </div>
                           <div className="flex items-center">
-                            <span className="max-w-[200px] sm:max-w-[600px] xl:max-w-[800px] bg-red-300 break-words rounded-2xl px-[14px] py-[6px]">
+                            <span className="max-w-[200px] sm:max-w-[600px] xl:max-w-[800px] overflow-auto bg-red-300 break-words rounded-2xl px-[14px] py-[6px]">
                               <p className="text-[12px] opacity-90 text-left">
                                 {item.username}
                               </p>
