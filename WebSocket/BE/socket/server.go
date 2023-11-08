@@ -15,18 +15,11 @@ import (
 
 var clients = make(map[*websocket.Conn]bool)
 
-// var (
-//
-//	userMutex sync.Mutex
-//	mesMutex  sync.Mutex
-//
-// )
 var broadcast = make(chan Update)
 
-// var allMessages []Message
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true // return true to allow all origins, or customize as needed
+		return true
 	},
 }
 var uId int64
@@ -153,33 +146,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Type: UserJoin,
 				User: user,
 			}
-			// case UpFile:
-			// 	ResponseFile, err := helper.ProcessFile(update.Message.File)
-			// 	helper.Logger.Println(update)
-			// 	if err != nil {
-			// 		broadcast <- Update{
-			// 			Type: UpFile,
-			// 			User: User{
-			// 				Id:       0,
-			// 				UserName: "Admin",
-			// 			},
-			// 			Message: Message{
-			// 				Message: "Err : Cant upload file",
-			// 			},
-			// 		}
-			// 	}
-			// mesMap[mesId] = Message{
-			// 	Id:       mesId,
-			// 	Uid:      currentUid,
-			// 	Time:     update.Message.Time,
-			// 	Message:  update.Message.Message,
-			// 	Username: update.User.UserName,
-			// }
-			// new := update
-			// new.Message.File = ResponseFile
-			// update = new
-			// broadcast <- update
-			// atomic.AddInt64(&mesId, 1)
+
 		case AddMessage:
 
 			mesMap[mesId] = Message{
@@ -242,8 +209,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			delete(clients, ws)
 			break
 		}
-		//helper.Logger.Println(UserMap)
-		//broadcast <- update
+
 	}
 }
 
