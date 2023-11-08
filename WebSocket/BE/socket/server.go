@@ -4,7 +4,7 @@ import (
 	"chatapp/helper"
 	. "chatapp/structure"
 	"encoding/json"
-	"fmt"
+
 	"io/ioutil"
 	"net/http"
 	"sync/atomic"
@@ -35,8 +35,12 @@ var mesId int64 = 1
 var UserMap = make(map[int64]User)
 var mesMap = make(map[int64]Message)
 
+func Init() {
+	helper.InitLogger()
+}
+
 func Upfile(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hello")
+	helper.Logger.Println("hello")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	err := r.ParseMultipartForm(10 << 50)
 	if err != nil {
@@ -51,7 +55,7 @@ func Upfile(w http.ResponseWriter, r *http.Request) {
 	}
 	var message Message
 	err = json.Unmarshal([]byte(r.FormValue("message")), &message)
-	fmt.Println(r.FormValue("message"))
+	helper.Logger.Println(r.FormValue("message"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -95,17 +99,17 @@ func Upfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.RemoteAddr)
+	helper.Logger.Println(r.RemoteAddr)
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println(err)
+		helper.Logger.Println(err)
 	}
 	var user User
 	var currentUid int64
 
 	if err != nil {
-		fmt.Println(err)
+		helper.Logger.Println(err)
 		return
 	}
 	defer ws.Close()
@@ -124,9 +128,9 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 						Time:    time.Now().Format(time.RFC3339),
 					},
 				}
-				fmt.Println("Client has gone away:", err)
+				helper.Logger.Println("Client has gone away:", err)
 			} else {
-				fmt.Println(err)
+				helper.Logger.Println(err)
 			}
 			delete(clients, ws)
 			break
@@ -140,7 +144,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				CreateAt:   time.Now(),
 				RemoteAddr: r.RemoteAddr,
 			}
-			fmt.Println(user.Photo)
+			helper.Logger.Println(user.Photo)
 			UserMap[uId] = user
 			currentUid = uId
 
@@ -151,7 +155,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			}
 			// case UpFile:
 			// 	ResponseFile, err := helper.ProcessFile(update.Message.File)
-			// 	fmt.Println(update)
+			// 	helper.Logger.Println(update)
 			// 	if err != nil {
 			// 		broadcast <- Update{
 			// 			Type: UpFile,
@@ -220,25 +224,25 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			UserMap[currentUid].Messages[mesId].Message = ""
 			broadcast <- update
 		default:
-			fmt.Println("Unknown update type:", update.Type)
+			helper.Logger.Println("Unknown update type:", update.Type)
 		}
 
 		userData, err := json.Marshal(UserMap)
 		if err != nil {
-			fmt.Println(err)
+			helper.Logger.Println(err)
 		}
 		ioutil.WriteFile("Users.json", userData, 0777)
 		MesData, err := json.Marshal(mesMap)
 		if err != nil {
-			fmt.Println(err)
+			helper.Logger.Println(err)
 		}
 		ioutil.WriteFile("Message.json", MesData, 0777)
 		if err != nil {
-			fmt.Println(err)
+			helper.Logger.Println(err)
 			delete(clients, ws)
 			break
 		}
-		//fmt.Println(UserMap)
+		//helper.Logger.Println(UserMap)
 		//broadcast <- update
 	}
 }
@@ -249,7 +253,7 @@ func handleMessages() {
 		for client := range clients {
 			err := client.WriteJSON(update)
 			if err != nil {
-				fmt.Println(err)
+				helper.Logger.Println(err)
 				client.Close()
 				delete(clients, client)
 			}
@@ -258,7 +262,7 @@ func handleMessages() {
 }
 
 func main() {
-
+	Init()
 	fs := http.FileServer(http.Dir("./Static/"))
 	http.Handle("/uploaded/", http.StripPrefix("/uploaded/", fs))
 	http.HandleFunc("/ws", handleConnections)
@@ -274,6 +278,6 @@ func main() {
 		w.Write([]byte(usersJson))
 	})
 	go handleMessages()
-	fmt.Println("Server is listening on port 8080")
+	helper.Logger.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
