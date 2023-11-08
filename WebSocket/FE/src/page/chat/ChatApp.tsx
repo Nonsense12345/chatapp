@@ -391,7 +391,7 @@ const ChatApp = () => {
                             <img
                               src={
                                 photoImg ||
-                                "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"
+                                "https://qph.cf2.quoracdn.net/main-qimg-965b11ec95106e64d37f5c380802c305-lq"
                               }
                               alt="logo"
                               className="h-[30px] rounded-full w-[30px] object-cover"
