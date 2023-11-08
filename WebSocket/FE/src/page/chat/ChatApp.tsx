@@ -124,7 +124,10 @@ const ChatApp = () => {
         toast.success(res.user.UserName + " joined");
       }
     },
-    onError: () => {
+    onOpen: () => {
+      toast.success("Connected");
+    },
+    onClose: () => {
       toast.error("Can Not Connect to server");
     },
   });
@@ -132,9 +135,7 @@ const ChatApp = () => {
     if (!item.File) return null;
 
     const { mime_type, link } = item.File;
-    console.log(mime_type);
 
-    console.log(mime_type);
     const src = "https://chat.catim.pp.ua" + link || "";
 
     if (mime_type.includes("image")) {
@@ -155,12 +156,12 @@ const ChatApp = () => {
       );
     } else if (mime_type.includes("video")) {
       return (
-        <video controls src={src}>
+        <video controls src={src} width={280} height={280}>
           Your browser does not support the video element.
         </video>
       );
     } else if (mime_type.includes("text")) {
-      return <iframe src={src} title="text-content" />;
+      return <iframe src={src} title="text-content" width={320} height={320} />;
     } else if (mime_type.trim() === "") {
       return "";
     } else {
@@ -258,7 +259,8 @@ const ChatApp = () => {
   const getData = async () => {
     if (isLogined) {
       const res = await axios.get("https://chat.catim.pp.ua/allmessages");
-      console.log(res);
+      const allUser = await axios.get("https://chat.catim.pp.ua/allusers");
+      console.log(allUser);
 
       if (res.data) {
         const totalMess: validateDataMess[] = [];
@@ -369,8 +371,8 @@ const ChatApp = () => {
             >
               <div className="h-[80%] overflow-auto" id="scrollbar">
                 {messages &&
-                  messages.map((item: validateDataMess) => (
-                    <div key={item.time}>
+                  messages.map((item: validateDataMess, index) => (
+                    <div key={item.time + index}>
                       {item.username === UserName ? (
                         <div className="flex items-start justify-end  my-[6px]">
                           <div className="flex items-center justify-end">
