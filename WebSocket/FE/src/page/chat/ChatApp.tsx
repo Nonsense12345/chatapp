@@ -1,10 +1,24 @@
 // import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import logo from "../../assets/img/logo.png";
 import useWebSocket from "react-use-websocket";
 import style from "./style.module.scss";
 import Login from "./Login";
-
+// import cat from "../../assets/img/cat.jpg";
+// import angry from "../../assets/img/angry.jpg";
+// import cry from "../../assets/img/Cry.jpg";
+// import cry2 from "../../assets/img/cry2.png";
+// import dam from "../../assets/img/dam.jpg";
+// import dog from "../../assets/img/dog.png";
+// import dog2 from "../../assets/img/dog2.jpg";
+// import fuck from "../../assets/img/fuck.jpg";
+// import game from "../../assets/img/game.png";
+// import like from "../../assets/img/like.png";
+// import namo from "../../assets/img/namo.jpg";
+// import sad from "../../assets/img/sad.jpg";
+// import shoot from "../../assets/img/shoot.png";
+// import smart from "../../assets/img/smart.jpg";
+// import haha from "../../assets/img/haha.jpg";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import axios from "axios";
@@ -29,7 +43,59 @@ interface validateDataMess {
 }
 
 const ChatApp = () => {
-  //const [dataFiles, setDataFiles] = useState<FileData>();
+  // const listMeme = useRef<string[]>([
+  //   cat,
+  //   angry,
+  //   cry,
+  //   cry2,
+  //   haha,
+  //   dam,
+  //   dog,
+  //   dog2,
+  //   fuck,
+  //   game,
+  //   namo,
+  //   like,
+  //   shoot,
+  //   smart,
+  //   sad,
+  // ]);
+  const listIcon = useRef<string[]>([
+    "😀",
+    "😃",
+    "😄",
+    "😁",
+    "😅",
+    "😂",
+    "😍",
+    "🥰",
+    "😎",
+    "🥳",
+    "😊",
+    "😭",
+    "😢",
+    "😡",
+    "🤬",
+    "😰",
+    "😨",
+    "😱",
+    "🤮",
+    "🤢",
+    "🤤",
+    "💩",
+    "🫶",
+    "👊",
+    "🤛",
+    "💋",
+    "👀",
+    "🐶",
+    "🐱",
+    "🐭",
+    "🐹",
+    "🐰",
+    "🦊",
+    "🐻",
+  ]);
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState<validateDataMess[]>([]);
   const [isLogined, setIsLogined] = useState<boolean>(false);
@@ -58,6 +124,9 @@ const ChatApp = () => {
         toast.success(res.user.UserName + " joined");
       }
     },
+    onError: () => {
+      toast.error("Can Not Connect to server");
+    },
   });
   function renderContentByMimeType(item: validateDataMess) {
     if (!item.File) return null;
@@ -69,7 +138,15 @@ const ChatApp = () => {
     const src = "https://chat.catim.pp.ua" + link || "";
 
     if (mime_type.includes("image")) {
-      return <img src={src} alt="" width={500} height={500} />;
+      return (
+        <img
+          src={src}
+          alt="img"
+          className="object-cover"
+          width={300}
+          height={300}
+        />
+      );
     } else if (mime_type.includes("audio")) {
       return (
         <audio controls src={src}>
@@ -209,6 +286,9 @@ const ChatApp = () => {
       })
     );
   };
+  const width = useRef<HTMLDivElement>(null);
+  const showIcon = useRef<HTMLDivElement>(null);
+  const [bottom, setBottom] = useState<number>();
   document.documentElement.style.overflowX = "hidden";
   useEffect(() => {
     const element = document.getElementById("scrollbar");
@@ -216,6 +296,7 @@ const ChatApp = () => {
       element.style.overflowX = "hidden"; // Ẩn thanh cuộn ngang
     }
     getData();
+    setBottom(width.current?.offsetHeight);
   }, [isLogined]);
   useEffect(() => {
     const Box = document.getElementById("scrollbar");
@@ -230,20 +311,40 @@ const ChatApp = () => {
       setFile(inputFile.files[0]);
     }
   };
-  console.log(inputMessages.length);
-  window.addEventListener("offline", function () {
-    toast.warn("Mất kết nối mạng, WebSocket có thể đã bị đóng.");
-  });
+  const onShowIcon = () => {
+    console.log(2);
+    showIcon.current?.classList.toggle("opacity-0");
+    showIcon.current?.classList.toggle("pointer-events-none");
+  };
+  const onOffIcon = () => {
+    console.log(3);
+    showIcon.current?.classList.add(
+      ..."opacity-0 pointer-events-none".split(" ")
+    );
+  };
+
   return (
     <div className="h-[1200px]">
       {!isLogined ? (
         <Login login={login} />
       ) : (
-        <div className={`${style.login} block h-[1200px] overflow-hidden`}>
+        <div
+          className={`${style.login} block h-[1200px] overflow-hidden`}
+          onClick={(e) => {
+            onOffIcon();
+            e.stopPropagation();
+          }}
+        >
           <div className="flex justify-around flex-wrap lg:justify-center items-center relative">
-            <div className="flex items-center w-[300px] justify-between">
-              <img src={logo} alt="logo" className="h-[100px]" />
-              <h1 className="text-[3em]">Chat App</h1>
+            <div className="flex items-center w-[300px] justify-center">
+              <img
+                src={logo}
+                alt="logo"
+                className="h-[50px] lg:h-[100px] mt-[20px]"
+              />
+              <h1 className="text-[1.5em] md:text-[2.5em]  lg:text-[3em]">
+                Chat App
+              </h1>
             </div>
             <div className="lg:absolute top-[20px] right-[50px] flex items-center">
               <div className="mr-[10px] border-[2px] border-solid border-[#3d91ff] rounded-xl">
@@ -262,7 +363,7 @@ const ChatApp = () => {
               </div>
             </div>
           </div>
-          <div className="w-full mt-[20px] flex justify-center h-[80vh] ">
+          <div className="w-full mt-[60px] flex justify-center h-[80vh] ">
             <div
               className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
             >
@@ -338,10 +439,32 @@ const ChatApp = () => {
                   </div>
                 )}
               </div>
-              <div className=" flex items-center h-[15%]   py-[10px]  border-[#f9f9f9] w-[100%] ">
-                <div className="flex w-full lg:flex-row flex-col  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl">
+              <div className=" flex items-center h-[15%]   py-[10px]   w-[100%] ">
+                {/* icon */}
+
+                <div
+                  ref={width}
+                  className="flex w-full lg:flex-row flex-col relative  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl"
+                >
+                  <div
+                    ref={showIcon}
+                    className={`absolute flex opacity-0 pointer-events-none transition-all duration-200 ease-in-out  flex-wrap lg:w-[300px]  bg-white p-[10px] right-[10px] rounded-lg h-[200px] overflow-auto w-[100px] sm:w-[150px]`}
+                    style={bottom ? { bottom: `${bottom + 18}px` } : {}}
+                  >
+                    {listIcon.current.map((item) => (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInputMessages(inputMessages + item);
+                        }}
+                        className="h-[40px] w-[40px] mx-[6px] rounded-xl object-cover cursor-pointer hover:scale-110 transition-all duration-200 ease-in-out"
+                      >
+                        {item}
+                      </div>
+                    ))}
+                  </div>
                   {file?.name ? (
-                    <div className="bg-red-400 h-[30px] rounded-2xl lg:flex hidden  px-[10px] py-[2px]  ">
+                    <div className="bg-red-400 h-[30px] rounded-2xl lg:flex hidden  px-[10px] py-[2px] max-w-[100px] ">
                       <span className="line-clamp-1">{file?.name}</span>
                       <i
                         className="bi bi-x text-white text-[20px] cursor-pointer"
@@ -368,9 +491,9 @@ const ChatApp = () => {
                     className="w-4/5    text-black outline-none pl-[10px] resize-none "
                   />
 
-                  <div className="flex w-auto xl:w-[20%] justify-end">
+                  <div className="flex w-auto xl:w-[20%] justify-end flex-col">
                     {file?.name ? (
-                      <div className="bg-red-400 h-[30px] rounded-2xl lg:hidden flex  px-[10px] py-[2px]  ">
+                      <div className="bg-red-400 h-[30px] rounded-2xl lg:hidden flex  px-[10px] py-[2px] mb-[10px] ">
                         <span className="line-clamp-1">{file?.name}</span>
                         <i
                           className="bi bi-x text-white text-[20px] cursor-pointer"
@@ -380,31 +503,43 @@ const ChatApp = () => {
                     ) : (
                       ""
                     )}
-                    <div className=" rounded-full  flex justify-center items-center mx-[10px]">
-                      <label htmlFor="files" className="text-black">
-                        <i className="bg-[#3d91ff] hover:opacity-80 flex justify-center items-center w-[30px] h-[30px] rounded-full bi bi-plus  text-white text-[26px]"></i>
-                      </label>
-                      <input
-                        id="files"
-                        type="file"
-                        onChange={handleFileChange}
-                        className={` z-[-1] absolute opacity-0`}
-                      />
-                    </div>
-                    <div
-                      className={`flex items-center border-[2px] border-solid border-[#3d91ff]  rounded-full w-[60px] justify-center  hover:opacity-90 overflow-hidden ${style.send}`}
-                      onClick={() => {
-                        if (inputMessages.trim() !== "" || file) {
-                          setInputMessages("");
-                          sendMessaged();
-                          setFile(undefined);
-                        }
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <i
-                          className={`bi bi-send text-[14px] img1 text-[#3d91ff]  ${style.imgSend}`}
-                        ></i>
+                    <div className="flex justify-center lg:justify-end">
+                      <div className=" rounded-full  flex justify-center items-center ">
+                        <label htmlFor="files" className="text-black">
+                          <i className="bg-[#3d91ff] cursor-pointer hover:opacity-80 flex justify-center items-center w-[30px] h-[30px] rounded-full bi bi-plus  text-white text-[26px]"></i>
+                        </label>
+                        <input
+                          id="files"
+                          type="file"
+                          onChange={handleFileChange}
+                          className={` z-[-1] absolute opacity-0`}
+                        />
+                      </div>
+                      <div
+                        className=" mx-[20px] "
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onShowIcon();
+                        }}
+                      >
+                        <i className="bi bi-emoji-laughing text-[26px] cursor-pointer hover:opacity-80 rounded-full text-[#3d91ff]"></i>
+                      </div>
+                      <div
+                        className={`flex items-center border-[2px] border-solid border-[#3d91ff]  rounded-full w-[60px] justify-center  hover:opacity-90 overflow-hidden ${style.send}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (inputMessages.trim() !== "" || file) {
+                            setInputMessages("");
+                            sendMessaged();
+                            setFile(undefined);
+                          }
+                        }}
+                      >
+                        <div className="flex cursor-pointer">
+                          <i
+                            className={`bi bi-send text-[14px] img1 text-[#3d91ff]  ${style.imgSend}`}
+                          ></i>
+                        </div>
                       </div>
                     </div>
                   </div>
