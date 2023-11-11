@@ -121,6 +121,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 						Time:    time.Now().Format(time.RFC3339),
 					},
 				}
+				delete(UserMap, user.Id)
 				helper.Logger.Println("Client has gone away:", err)
 			} else {
 				helper.Logger.Println(err)
