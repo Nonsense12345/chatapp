@@ -441,7 +441,7 @@ const ChatApp = () => {
                 >
                   {listUserOnline &&
                     listUserOnline.map((item) => (
-                      <SwiperSlide className="flex items-center " key={item.id}>
+                      <SwiperSlide className="flex items-center " key={item.Id}>
                         <div className="w-[40px] h-[40px] relative">
                           <img
                             src={item.Photo}
