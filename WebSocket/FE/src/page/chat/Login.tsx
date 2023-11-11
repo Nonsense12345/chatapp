@@ -1,7 +1,7 @@
 import { useState } from "react";
 import style from "./style.module.scss";
 const imgDefault =
-  "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg";
+  "https://qph.cf2.quoracdn.net/main-qimg-965b11ec95106e64d37f5c380802c305-lq";
 interface PropLogin {
   login: (text: string, text2: string) => void;
 }

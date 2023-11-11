@@ -133,11 +133,16 @@ const ChatApp = () => {
 
       if (res.type !== "USER_JOIN") {
         if (res.type === "USER_LEAVE") {
+          const NewListUsersOnline = listUserOnline.filter(
+            (item) => item.id !== res.user.id
+          );
+          setListUserOnline(NewListUsersOnline);
           toast.warn(res.user.UserName + " Leaved");
         }
 
         setMessages((prevMessages) => [...prevMessages, res.message]);
       } else if (res.type === "USER_JOIN" && isLogined) {
+        setListUserOnline((prevList) => [...prevList, res.user]);
         toast.success(res.user.UserName + " joined");
       }
     },
@@ -263,7 +268,7 @@ const ChatApp = () => {
       const avar =
         photoImg.trim() !== ""
           ? photoImg
-          : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg";
+          : "https://qph.cf2.quoracdn.net/main-qimg-965b11ec95106e64d37f5c380802c305-lq";
       sendMessage(
         JSON.stringify({
           type: "ADD_MESSAGE",
