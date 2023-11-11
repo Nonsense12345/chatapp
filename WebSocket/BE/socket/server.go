@@ -4,6 +4,7 @@ import (
 	"chatapp/helper"
 	. "chatapp/structure"
 	"encoding/json"
+	"log"
 
 	"io/ioutil"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 )
 
 var clients = make(map[*websocket.Conn]bool)
+var voiceRoom = make(map[*websocket.Conn]bool)
 
 var broadcast = make(chan Update)
 
@@ -30,6 +32,36 @@ var mesMap = make(map[int64]Message)
 
 func Init() {
 	helper.InitLogger()
+}
+func VoiceChat(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close()
+	voiceRoom[conn] = true
+
+	for {
+		voiceData := VoiceData{}
+		err := conn.ReadJSON(voiceData)
+		if err != nil {
+			log.Println("read:", err)
+			delete(voiceRoom, conn)
+			break
+		}
+
+		for client := range clients {
+			if client != conn {
+				if err := client.WriteJSON(voiceData); err != nil {
+					log.Println("write:", err)
+					delete(voiceRoom, client)
+					client.Close()
+				}
+			}
+		}
+	}
+
 }
 
 func Upfile(w http.ResponseWriter, r *http.Request) {
@@ -232,6 +264,7 @@ func main() {
 	Init()
 	fs := http.FileServer(http.Dir("./Static/"))
 	http.Handle("/uploaded/", http.StripPrefix("/uploaded/", fs))
+	http.HandleFunc("/voicechat", VoiceChat)
 	http.HandleFunc("/ws", handleConnections)
 	http.HandleFunc("/upload", Upfile)
 	http.HandleFunc("/allmessages", func(w http.ResponseWriter, r *http.Request) {
