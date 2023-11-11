@@ -1,41 +1,44 @@
-import { useState } from "react";
-
+// import { useState } from "react";
 interface VoiceRoomProps {
   UserName: string;
   Photo: string;
 }
+
 const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
-  const [VoiceWebSocket, setVoiceWebSocket] = useState<WebSocket | null>(null);
-  const audioContext = new window.AudioContext();
-
-  const connectAndRecord = () => {
+  // const [VoiceWebSocket, setVoiceWebSocket] = useState<WebSocket | null>(null);
+  const readBlobAsBase64 = (blob) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  const connectWebSocket = () => {
     const ws = new WebSocket("ws://localhost:8080/voicechat");
-
     ws.onopen = () => {
       console.log("Kết nối WebSocket đã mở.");
-      startRecording();
+
+      startRecording(ws);
     };
 
-    ws.onmessage = async function (event) {
-     
-
+    ws.onmessage = function (event) {
       try {
         const data = JSON.parse(event.data);
-        const audioData = atob(data.audioblob.split(",")[1]);
-        const audioArray = new Uint8Array(audioData.length);
-
-        for (let i = 0; i < audioData.length; i++) {
-        audioArray[i] = audioData.charCodeAt(i);
-  }
-
-        const audioBlob = new Blob([audioArray.buffer], { type: 'audio/ogg' });
-
+        const audioBlob = new Blob(
+          [
+            new Uint8Array(
+              atob(data.audioblob.split(",")[1])
+                .split("")
+                .map((c) => c.charCodeAt(0))
+            ),
+          ],
+          { type: "audio/webm; codecs=opus" }
+        );
         const audioUrl = URL.createObjectURL(audioBlob);
-
         const audio = new Audio(audioUrl);
-          audio.play();
+        audio.play();
       } catch (e) {
-        console.error("Error parsing message data:", e);
+        console.error("Error playing audio:", e);
       }
     };
 
@@ -46,40 +49,63 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     ws.onclose = () => {
       console.log("Kết nối WebSocket đã đóng.");
     };
-
-    setVoiceWebSocket(ws);
   };
 
-  const startRecording = () => {
+  const startRecording = (ws: WebSocket) => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket không mở.");
+      return;
+    }
+
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm;codecs=opus",
+      });
+
+      let audioChunks: Blob[] = [];
       mediaRecorder.ondataavailable = (event) => {
-        if (
-          VoiceWebSocket &&
-          event.data.size > 0 &&
-          VoiceWebSocket.readyState === WebSocket.OPEN
-        ) {
-          let reader = new FileReader();
-          reader.readAsDataURL(event.data);
-          reader.onloadend = () => {
-            const base64audio = reader.result;
-            VoiceWebSocket.send(
-              JSON.stringify({
-                username: UserName,
-                photo: Photo,
-                audioblob: base64audio,
-              })          
-         
-          );
-        }
+        audioChunks.push(event.data);
       };
-      mediaRecorder.start(100);
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, {
+          type: "audio/webm;codecs=opus",
+        });
+        try {
+          const base64audio = await readBlobAsBase64(audioBlob);
+          ws.send(
+            JSON.stringify({
+              username: UserName,
+              photo: Photo,
+              audioblob: base64audio,
+            })
+          );
+          console.log(base64audio);
+        } catch (error) {
+          console.error("Error reading blob as base64:", error);
+        }
+        audioChunks = [];
+      };
+
+      setInterval(() => {
+        if (mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+        } else {
+          mediaRecorder.start();
+        }
+      }, 1000);
     });
   };
 
   return (
     <div>
-      <button onClick={connectAndRecord}>Join Voice Chat Room</button>
+      <button
+        onClick={() => {
+          connectWebSocket();
+        }}
+      >
+        Join Voice Chat Room
+      </button>
     </div>
   );
 };
