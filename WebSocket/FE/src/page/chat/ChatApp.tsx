@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import logo from "../../assets/img/logo.png";
 import useWebSocket from "react-use-websocket";
 import style from "./style.module.scss";
+import "./styles.css";
 import Login from "./Login";
 // import cat from "../../assets/img/cat.jpg";
 // import angry from "../../assets/img/angry.jpg";
@@ -22,6 +23,15 @@ import Login from "./Login";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import axios from "axios";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+
+// import "./styles.css";
+
+import { Navigation } from "swiper/modules";
 interface ReadResult {
   done: boolean;
   value?: Uint8Array;
@@ -41,7 +51,14 @@ interface validateDataMess {
     data: string;
   };
 }
-
+interface typeUser {
+  CreateAt: string;
+  id: string;
+  message: validateDataMess[];
+  Photo: string;
+  RemoteAddr: string;
+  UserName: string;
+}
 const ChatApp = () => {
   // const listMeme = useRef<string[]>([
   //   cat,
@@ -104,7 +121,7 @@ const ChatApp = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [file, setFile] = useState<File>();
-
+  const [listUserOnline, setListUserOnline] = useState<typeUser[]>([]);
   const [photoImg, setPhotoImg] = useState<string>("");
   useEffect(() => {
     console.log("Messages state changed:", messages);
@@ -113,7 +130,6 @@ const ChatApp = () => {
   const { sendMessage } = useWebSocket("wss://chat.catim.pp.ua/ws", {
     onMessage: (e) => {
       const res = JSON.parse(e.data);
-      console.log(res);
 
       if (res.type !== "USER_JOIN") {
         if (res.type === "USER_LEAVE") {
@@ -124,12 +140,12 @@ const ChatApp = () => {
         toast.success(res.user.UserName + " joined");
       }
     },
-    onOpen: () => {
-      toast.success("Connected");
-    },
-    onClose: () => {
-      toast.error("Can Not Connect to server");
-    },
+    // onOpen: () => {
+    //   toast.success("Connected");
+    // },
+    // onClose: () => {
+    //   toast.error("Can Not Connect to server");
+    // },
   });
   function renderContentByMimeType(item: validateDataMess) {
     if (!item.File) return null;
@@ -191,7 +207,7 @@ const ChatApp = () => {
     if (file) {
       const formData = new FormData();
       setTotalSize(file.size);
-      console.log("filesize :" + file.size);
+
       formData.append("file", file);
       formData.append(
         "user",
@@ -228,19 +244,19 @@ const ChatApp = () => {
         });
       setDone(false);
       const reader = file.stream().getReader();
-      function progress({ done, value }: ReadResult) {
+      const progress = ({ done, value }: ReadResult) => {
         if (done) setDone(true);
         if (value) {
           setUploadProgress((oldProgress) => {
             const newProgress = oldProgress + value.length;
-            console.log(`Uploaded ${newProgress} of ${totalSize}`);
+
             return newProgress;
           });
         }
         if (!done) {
           reader.read().then(progress as (result: ReadResult) => void);
         }
-      }
+      };
       reader.read().then(progress);
     } else {
       const avar =
@@ -265,17 +281,27 @@ const ChatApp = () => {
   };
   const getData = async () => {
     if (isLogined) {
-      const res = await axios.get("https://chat.catim.pp.ua/allmessages");
-      const allUser = await axios.get("https://chat.catim.pp.ua/allusers");
-      console.log(allUser);
+      try {
+        const allUser = await axios.get("https://chat.catim.pp.ua/allusers");
 
-      if (res.data) {
-        const totalMess: validateDataMess[] = [];
-        Object.keys(res.data).forEach(function (key) {
-          totalMess.push(res.data[key]);
-        });
+        const res = await axios.get("https://chat.catim.pp.ua/allmessages");
+        if (res.data) {
+          const totalMess: validateDataMess[] = [];
+          Object.keys(res.data).forEach(function (key) {
+            totalMess.push(res.data[key]);
+          });
 
-        setMessages(totalMess);
+          setMessages(totalMess);
+        }
+        if (allUser.data) {
+          const totalUserOnlie: typeUser[] = [];
+          Object.keys(allUser.data).forEach(function (key) {
+            totalUserOnlie.push(allUser.data[key]);
+          });
+          setListUserOnline(totalUserOnlie);
+        }
+      } catch (err) {
+        console.log(err);
       }
     }
   };
@@ -321,12 +347,10 @@ const ChatApp = () => {
     }
   };
   const onShowIcon = () => {
-    console.log(2);
     showIcon.current?.classList.toggle("opacity-0");
     showIcon.current?.classList.toggle("pointer-events-none");
   };
   const onOffIcon = () => {
-    console.log(3);
     showIcon.current?.classList.add(
       ..."opacity-0 pointer-events-none".split(" ")
     );
@@ -372,7 +396,59 @@ const ChatApp = () => {
               </div>
             </div>
           </div>
-          <div className="w-full mt-[60px] flex justify-center h-[80vh] ">
+          <div className="w-full mt-[20px] flex justify-center h-[80vh] flex-col items-center">
+            <div className="my-[10px] text-[1.2em]">Thành Viên Online</div>
+            <div className="h-[60px] w-4/5 mb-4 shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] rounded-full flex justify-center items-center">
+              {listUserOnline && listUserOnline.length > 0 ? (
+                <Swiper
+                  slidesPerView={1}
+                  navigation={true}
+                  slidesPerGroup={1}
+                  speed={600}
+                  modules={[Navigation]}
+                  className="mySwiper  text-white "
+                  breakpoints={{
+                    576: {
+                      slidesPerView: 2,
+                      slidesPerGroup: 1,
+                    },
+                    768: {
+                      slidesPerView: 3,
+                      slidesPerGroup: 2,
+                    },
+                    1024: {
+                      slidesPerView: 4,
+                      slidesPerGroup: 3,
+                    },
+                    2048: {
+                      slidesPerView: 5,
+                      slidesPerGroup: 3,
+                    },
+                  }}
+                >
+                  {listUserOnline &&
+                    listUserOnline.map((item) => (
+                      <SwiperSlide className="flex items-center " key={item.id}>
+                        <div className="w-[40px] h-[40px] relative">
+                          <img
+                            src={item.Photo}
+                            alt=""
+                            className="rounded-2xl"
+                          />
+                          <div className="h-[10px] w-[10px] absolute bg-[#35cc3c] bottom-[0] right-0 rounded-full"></div>
+                        </div>
+                        <p className="break-words w-[40%] line-clamp-1">
+                          {item.UserName}
+                        </p>
+                      </SwiperSlide>
+                    ))}
+                </Swiper>
+              ) : (
+                <div className="text-[1em]">
+                  Không có người dùng nào đang hoạt động
+                </div>
+              )}
+            </div>
             <div
               className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
             >
@@ -453,20 +529,21 @@ const ChatApp = () => {
 
                 <div
                   ref={width}
-                  className="flex w-full lg:flex-row flex-col relative  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl"
+                  className="flex w-full   lg:flex-row flex-col relative  items-center  bg-white  mx-[20px] p-[10px] h-auto rounded-xl"
                 >
                   <div
                     ref={showIcon}
-                    className={`absolute flex opacity-0 pointer-events-none transition-all duration-200 ease-in-out  flex-wrap lg:w-[300px]  bg-white p-[10px] right-[10px] rounded-lg h-[200px] overflow-auto w-[100px] sm:w-[150px]`}
+                    className={`absolute flex overflow-auto justify-center md:justify-start opacity-0 pointer-events-none transition-all duration-200 ease-in-out  flex-wrap lg:w-[300px]  bg-white p-[10px] right-[10px] rounded-sm h-[200px]  w-[100px] sm:w-[150px]`}
                     style={bottom ? { bottom: `${bottom + 18}px` } : {}}
                   >
                     {listIcon.current.map((item) => (
                       <div
+                        key={item}
                         onClick={(e) => {
                           e.stopPropagation();
                           setInputMessages(inputMessages + item);
                         }}
-                        className="h-[40px] w-[40px] mx-[6px] rounded-xl object-cover cursor-pointer hover:scale-110 transition-all duration-200 ease-in-out"
+                        className="select-none h-[40px] w-[40px] flex justify-center mx-[6px] rounded-xl object-cover cursor-pointer hover:scale-110 transition-all duration-200 ease-in-out"
                       >
                         {item}
                       </div>
