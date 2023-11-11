@@ -4,7 +4,9 @@ import (
 	"chatapp/helper"
 	. "chatapp/structure"
 	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 
 	"io/ioutil"
 	"net/http"
@@ -23,6 +25,9 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
+	EnableCompression: true,
+	ReadBufferSize:    1024 * 4,
+	WriteBufferSize:   1024 * 4,
 }
 var uId int64
 
@@ -41,22 +46,30 @@ func VoiceChat(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 	voiceRoom[conn] = true
-
 	for {
-		voiceData := VoiceData{}
-		err := conn.ReadJSON(voiceData)
+		var voiceData VoiceData
+		//fmt.Println(voiceData.AudioBlob)
+		err := conn.ReadJSON(&voiceData)
+
+		//fmt.Println(voiceData.AudioBlob)
 		if err != nil {
+			fmt.Println(err)
 			log.Println("read:", err)
 			delete(voiceRoom, conn)
 			break
 		}
-
-		for client := range clients {
-			if client != conn {
-				if err := client.WriteJSON(voiceData); err != nil {
+		file, err := os.OpenFile("test.txt", os.O_APPEND|os.O_CREATE, 0777)
+		if err != nil {
+			log.Println(err)
+		}
+		file.WriteString(voiceData.AudioBlob + "\n\n\n")
+		for voiceClient := range voiceRoom {
+			if voiceClient != conn {
+				log.Println("writing")
+				if err := voiceClient.WriteJSON(voiceData); err != nil {
 					log.Println("write:", err)
-					delete(voiceRoom, client)
-					client.Close()
+					delete(voiceRoom, voiceClient)
+					voiceClient.Close()
 				}
 			}
 		}

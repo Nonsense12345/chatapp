@@ -46,7 +46,7 @@ type FileData struct {
 }
 
 type VoiceData struct {
-	UserName  string  `json:"username"`
-	Photo     string  `json:"photo"`
-	AudioBlob []uint8 `json:"audioblob"`
+	UserName  string `json:"username"`
+	Photo     string `json:"photo"`
+	AudioBlob string `json:"audioblob"`
 }
