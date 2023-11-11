@@ -135,6 +135,7 @@ const ChatApp = () => {
         if (res.type === "USER_LEAVE") {
           toast.warn(res.user.UserName + " Leaved");
         }
+
         setMessages((prevMessages) => [...prevMessages, res.message]);
       } else if (res.type === "USER_JOIN" && isLogined) {
         toast.success(res.user.UserName + " joined");
@@ -284,6 +285,17 @@ const ChatApp = () => {
       try {
         const allUser = await axios.get("https://chat.catim.pp.ua/allusers");
 
+        if (allUser.data) {
+          const totalUserOnlie: typeUser[] = [];
+          Object.keys(allUser.data).forEach(function (key) {
+            totalUserOnlie.push(allUser.data[key]);
+          });
+          setListUserOnline(totalUserOnlie);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      try {
         const res = await axios.get("https://chat.catim.pp.ua/allmessages");
         if (res.data) {
           const totalMess: validateDataMess[] = [];
@@ -292,13 +304,6 @@ const ChatApp = () => {
           });
 
           setMessages(totalMess);
-        }
-        if (allUser.data) {
-          const totalUserOnlie: typeUser[] = [];
-          Object.keys(allUser.data).forEach(function (key) {
-            totalUserOnlie.push(allUser.data[key]);
-          });
-          setListUserOnline(totalUserOnlie);
         }
       } catch (err) {
         console.log(err);
@@ -396,7 +401,7 @@ const ChatApp = () => {
               </div>
             </div>
           </div>
-          <div className="w-full mt-[20px] flex justify-center h-[80vh] flex-col items-center">
+          <div className="w-full mt-[60px] md:mt-[20px] flex justify-center h-[80vh] flex-col items-center ">
             <div className="my-[10px] text-[1.2em]">Thành Viên Online</div>
             <div className="h-[60px] w-4/5 mb-4 shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] rounded-full flex justify-center items-center">
               {listUserOnline && listUserOnline.length > 0 ? (
