@@ -53,7 +53,7 @@ interface validateDataMess {
 }
 interface typeUser {
   CreateAt: string;
-  id: string;
+  Id: string;
   message: validateDataMess[];
   Photo: string;
   RemoteAddr: string;
@@ -133,9 +133,12 @@ const ChatApp = () => {
 
       if (res.type !== "USER_JOIN") {
         if (res.type === "USER_LEAVE") {
+          console.log("OLD : " + JSON.stringify(listUserOnline));
           const NewListUsersOnline = listUserOnline.filter(
-            (item) => item.id !== res.user.id
+            (item) => item.Id != res.user.Id
           );
+          console.log("New :" + JSON.stringify(NewListUsersOnline));
+          console.log(res.user.Id);
           setListUserOnline(NewListUsersOnline);
           toast.warn(res.user.UserName + " Leaved");
         }
