@@ -33,7 +33,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     });
   const connectWebSocket = () => {
     const ws = VoiceWebSocket.current;
-    if (ws) {
+    if (ws.OPEN) {
       console.log("SIUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
     }
     ws.onopen = () => {
