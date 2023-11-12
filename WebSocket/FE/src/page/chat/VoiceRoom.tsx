@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { toast } from "react-toastify";
 interface VoiceRoomProps {
   UserName: string;
   Photo: string;
@@ -11,6 +12,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
   const [open, setOpen] = useState(false);
   const userRef = useRef<User[]>([]);
   const [user, SetUser] = useState<User[]>([]);
+  const [VoiceWebSocket, setVoiceWebSocket] = useState<boolean>(true);
 
   const togglePopup = () => {
     setOpen(!open);
@@ -18,7 +20,6 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
   const closePopup = () => {
     setOpen(false);
   };
-  // const [VoiceWebSocket, setVoiceWebSocket] = useState<WebSocket | null>(null);
 
   const readBlobAsBase64 = (blob: Blob) =>
     new Promise((resolve, reject) => {
@@ -29,12 +30,19 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     });
   const connectWebSocket = () => {
     const ws = new WebSocket("wss://chat.catim.pp.ua/voicechat");
+    if (VoiceWebSocket) {
+      console.log(123);
+
+      ws.close();
+    }
     ws.onopen = () => {
       console.log("Kết nối WebSocket đã mở.");
 
       startRecording(ws);
     };
-
+    ws.onclose = () => {
+      toast.warn("Closed Voicechat !");
+    };
     ws.onmessage = function (event) {
       try {
         const data = JSON.parse(event.data);
@@ -143,7 +151,6 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
           <div className="relative top-20 mx-auto p-5 border  shadow-lg rounded-md bg-white">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-medium">Voice Room</h3>
-              <button className="text-black close-popup">&times;</button>
             </div>
 
             <div className="mt-2">
@@ -170,8 +177,11 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
             </div>
 
             <div className="flex justify-end mt-4">
-              <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                HeheBOy
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded hover:opacity-80"
+                onClick={() => setVoiceWebSocket(true)}
+              >
+                Stop VoiceChat
               </button>
               <button
                 onClick={closePopup}
