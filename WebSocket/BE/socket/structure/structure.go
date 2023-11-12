@@ -44,3 +44,9 @@ type FileData struct {
 	Link     string `json:"link"`
 	Data     []byte `json:"data"`
 }
+
+type VoiceData struct {
+	UserName  string `json:"username"`
+	Photo     string `json:"photo"`
+	AudioBlob string `json:"audioblob"`
+}

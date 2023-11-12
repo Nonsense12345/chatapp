@@ -1,7 +1,7 @@
 import { useState } from "react";
 import style from "./style.module.scss";
 const imgDefault =
-  "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg";
+  "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png";
 interface PropLogin {
   login: (text: string, text2: string) => void;
 }

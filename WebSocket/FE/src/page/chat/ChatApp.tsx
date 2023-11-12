@@ -32,6 +32,7 @@ import "swiper/css/navigation";
 // import "./styles.css";
 
 import { Navigation } from "swiper/modules";
+import VoiceRoom from "./VoiceRoom";
 interface ReadResult {
   done: boolean;
   value?: Uint8Array;
@@ -53,7 +54,7 @@ interface validateDataMess {
 }
 interface typeUser {
   CreateAt: string;
-  id: string;
+  Id: string;
   message: validateDataMess[];
   Photo: string;
   RemoteAddr: string;
@@ -133,11 +134,19 @@ const ChatApp = () => {
 
       if (res.type !== "USER_JOIN") {
         if (res.type === "USER_LEAVE") {
+          console.log("OLD : " + JSON.stringify(listUserOnline));
+          const NewListUsersOnline = listUserOnline.filter(
+            (item) => item.Id != res.user.Id
+          );
+          console.log("New :" + JSON.stringify(NewListUsersOnline));
+          console.log(res.user.Id);
+          setListUserOnline(NewListUsersOnline);
           toast.warn(res.user.UserName + " Leaved");
         }
 
         setMessages((prevMessages) => [...prevMessages, res.message]);
       } else if (res.type === "USER_JOIN" && isLogined) {
+        setListUserOnline((prevList) => [...prevList, res.user]);
         toast.success(res.user.UserName + " joined");
       }
     },
@@ -263,7 +272,7 @@ const ChatApp = () => {
       const avar =
         photoImg.trim() !== ""
           ? photoImg
-          : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg";
+          : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png";
       sendMessage(
         JSON.stringify({
           type: "ADD_MESSAGE",
@@ -433,7 +442,7 @@ const ChatApp = () => {
                 >
                   {listUserOnline &&
                     listUserOnline.map((item) => (
-                      <SwiperSlide className="flex items-center " key={item.id}>
+                      <SwiperSlide className="flex items-center " key={item.Id}>
                         <div className="w-[40px] h-[40px] relative">
                           <img
                             src={item.Photo}
@@ -453,6 +462,9 @@ const ChatApp = () => {
                   Không có người dùng nào đang hoạt động
                 </div>
               )}
+            </div>
+            <div>
+              <VoiceRoom UserName={UserName} Photo={photoImg} />
             </div>
             <div
               className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
