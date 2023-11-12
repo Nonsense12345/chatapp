@@ -136,7 +136,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     closePopup();
   };
   return (
-    <div>
+    <div className="w-4/5">
       <button
         onClick={() => {
           connectWebSocket();
@@ -151,7 +151,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
           className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-screen w-full z-50"
           id="popupContainer"
         >
-          <div className="relative top-20 mx-auto p-5 border  shadow-lg rounded-md bg-white">
+          <div className="relative top-20 mx-auto p-5 border  shadow-lg rounded-md bg-white w-4/5">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-medium">Voice Room</h3>
             </div>
