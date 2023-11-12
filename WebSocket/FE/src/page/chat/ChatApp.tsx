@@ -32,6 +32,7 @@ import "swiper/css/navigation";
 // import "./styles.css";
 
 import { Navigation } from "swiper/modules";
+import VoiceRoom from "./VoiceRoom";
 interface ReadResult {
   done: boolean;
   value?: Uint8Array;
@@ -461,6 +462,9 @@ const ChatApp = () => {
                   Không có người dùng nào đang hoạt động
                 </div>
               )}
+            </div>
+            <div>
+              <VoiceRoom UserName={UserName} Photo={photoImg} />
             </div>
             <div
               className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
