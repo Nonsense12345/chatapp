@@ -33,7 +33,9 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     });
   const connectWebSocket = () => {
     const ws = VoiceWebSocket.current;
-
+    if (ws) {
+      console.log("SIUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
+    }
     ws.onopen = () => {
       console.log("Kết nối WebSocket đã mở.");
 
@@ -47,7 +49,6 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
         const data = JSON.parse(event.data);
 
         if (!userRef.current?.some((item) => item.username == data.username)) {
-          //console.log(data.username, data.photo);
           const newUser = {
             username: data.username,
             photo: data.photo,
