@@ -12,7 +12,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
   const [open, setOpen] = useState(false);
   const userRef = useRef<User[]>([]);
   const [user, SetUser] = useState<User[]>([]);
-  const [VoiceWebSocket, setVoiceWebSocket] = useState<boolean>(true);
+  const [VoiceWebSocket, setVoiceWebSocket] = useState<boolean>(false);
 
   const togglePopup = () => {
     setOpen(!open);
