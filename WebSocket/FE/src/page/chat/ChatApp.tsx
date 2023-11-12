@@ -141,12 +141,12 @@ const ChatApp = () => {
         toast.success(res.user.UserName + " joined");
       }
     },
-    // onOpen: () => {
-    //   toast.success("Connected");
-    // },
-    // onClose: () => {
-    //   toast.error("Can Not Connect to server");
-    // },
+    onOpen: () => {
+      toast.success("Connected");
+    },
+    onClose: () => {
+      toast.error("Can Not Connect to server");
+    },
   });
   function renderContentByMimeType(item: validateDataMess) {
     if (!item.File) return null;
