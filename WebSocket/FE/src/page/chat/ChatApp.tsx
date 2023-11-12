@@ -271,7 +271,7 @@ const ChatApp = () => {
       const avar =
         photoImg.trim() !== ""
           ? photoImg
-          : "https://qph.cf2.quoracdn.net/main-qimg-965b11ec95106e64d37f5c380802c305-lq";
+          : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png";
       sendMessage(
         JSON.stringify({
           type: "ADD_MESSAGE",
