@@ -28,7 +28,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
       reader.readAsDataURL(blob);
     });
   const connectWebSocket = () => {
-    const ws = new WebSocket("ws://localhost:8080/voicechat");
+    const ws = new WebSocket("wss://chat.catim.pp.ua/voicechat");
     ws.onopen = () => {
       console.log("Kết nối WebSocket đã mở.");
 
