@@ -128,7 +128,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
         } else {
           mediaRecorder.start();
         }
-      }, 1000);
+      }, 3000);
     });
   };
 
