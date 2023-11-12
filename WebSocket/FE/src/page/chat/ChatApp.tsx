@@ -124,6 +124,19 @@ const ChatApp = () => {
   const [file, setFile] = useState<File>();
   const [listUserOnline, setListUserOnline] = useState<typeUser[]>([]);
   const [photoImg, setPhotoImg] = useState<string>("");
+  const itemFirst = useRef<HTMLDivElement>(null);
+  const itemLast = useRef<HTMLDivElement>(null);
+  document.body.style.overflowX = "hidden";
+  useEffect(() => {
+    setTimeout(() => {
+      itemFirst.current?.classList.remove(
+        ..."translate-x-[200px] opacity-0".split(" ")
+      );
+      itemLast.current?.classList.remove(
+        ..."translate-x-[-200px] opacity-0".split(" ")
+      );
+    }, 500);
+  });
   useEffect(() => {
     console.log("Messages state changed:", messages);
   }, [messages]);
@@ -371,27 +384,28 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="h-[1200px]">
+    <div className="h-screen ">
       {!isLogined ? (
         <Login login={login} />
       ) : (
         <div
-          className={`${style.login} block h-[1200px] overflow-hidden`}
+          className={`${style.login} block h-full overflow-auto  py-[10px] overflow-x-hidden`}
           onClick={(e) => {
             onOffIcon();
             e.stopPropagation();
           }}
         >
-          <div className="flex justify-around flex-wrap lg:justify-center items-center relative">
+          <div
+            ref={itemFirst}
+            className="flex justify-around flex-wrap lg:justify-center items-center relative flex-col translate-x-[200px] opacity-0   ease-in-out duration-[2s]"
+          >
             <div className="flex items-center w-[300px] justify-center">
               <img
                 src={logo}
                 alt="logo"
-                className="h-[50px] lg:h-[100px] mt-[20px]"
+                className="h-[40px] lg:h-[80px] mt-[20px]"
               />
-              <h1 className="text-[1.5em] md:text-[2.5em]  lg:text-[3em]">
-                Chat App
-              </h1>
+              <h1 className="text-[1.5em] md:text-[2em] ">Chat App</h1>
             </div>
             <div className="lg:absolute top-[20px] right-[50px] flex items-center">
               <div className="mr-[10px] border-[2px] border-solid border-[#3d91ff] rounded-xl">
@@ -409,10 +423,10 @@ const ChatApp = () => {
                 <div>Đăng Xuất</div>
               </div>
             </div>
-          </div>
-          <div className="w-full mt-[40px] md:mt-[20px] flex justify-center h-[80vh] flex-col items-center ">
-            <div className="my-[10px] text-[1.2em]">Thành Viên Online</div>
-            <div className="h-[60px] w-4/5 mb-4 shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] rounded-full flex justify-center items-center">
+            <div className="text-[1.2em] my-[10px] md:my-[4px]">
+              Thành Viên Online
+            </div>
+            <div className="h-[60px] w-4/5 shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] rounded-full flex justify-center items-center">
               {listUserOnline && listUserOnline.length > 0 ? (
                 <Swiper
                   slidesPerView={1}
@@ -449,7 +463,7 @@ const ChatApp = () => {
                             alt=""
                             className="rounded-2xl"
                           />
-                          <div className="h-[10px] w-[10px] absolute bg-[#35cc3c] bottom-[0] right-0 rounded-full"></div>
+                          <div className="h-[10px] w-[10px] absolute bg-[#35cc3c] bottom-[0]  right-0 rounded-full"></div>
                         </div>
                         <p className="break-words w-[40%] line-clamp-1">
                           {item.UserName}
@@ -466,8 +480,13 @@ const ChatApp = () => {
             <div>
               <VoiceRoom UserName={UserName} Photo={photoImg} />
             </div>
+          </div>
+          <div
+            ref={itemLast}
+            className="w-full mt-[10px]  md:mt-[20px] flex justify-center h-[70vh] flex-col items-center translate-x-[-200px] opacity-0  ease-in-out duration-[2s]"
+          >
             <div
-              className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full overflow-hidden mt-[10px]`}
+              className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full overflow-hidden `}
             >
               <div className="h-[80%] overflow-auto" id="scrollbar">
                 {messages &&

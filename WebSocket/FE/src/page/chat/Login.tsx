@@ -1,28 +1,49 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import style from "./style.module.scss";
+import logo from "../../assets/img/logo.png";
 const imgDefault =
   "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png";
 interface PropLogin {
   login: (text: string, text2: string) => void;
 }
 const Login: React.FC<PropLogin> = ({ login }) => {
-  //   const dispatch = useDispatch();
-  //   const navigate = useNavigate();
   const [img, setImg] = useState(imgDefault);
   const [name, setName] = useState("");
-  //   let [pass, setPass] = useState("");
-  //   const handleLogin = () => {
-  //     if (name && pass) {
-  //       dispatch(logIned({ img, name }));
-  //       navigate("/");
-  //     }
-  //   };
+  const itemLogo = useRef<HTMLDivElement>(null);
+  const itemLogin = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    setTimeout(() => {
+      itemLogo.current?.classList.remove(
+        ..."translate-x-[500px] opacity-0".split(" ")
+      );
+      itemLogin.current?.classList.remove(
+        ..."translate-x-[-500px] opacity-0".split(" ")
+      );
+    }, 1000);
+  });
+  useEffect(() => {});
   return (
-    <div className={`${style.login}`}>
-      <div className={style.login_avar}>
-        <h2 className="font-semibold text-[2em]">Chat App</h2>
+    <div
+      className={`${style.login} flex flex-col md:flex-row items-center justify-around`}
+    >
+      <div
+        ref={itemLogo}
+        className={`flex items-center justify-center translate-x-[500px] opacity-0 transition-all ease-in-out duration-[2s]`}
+      >
+        <img
+          src={logo}
+          alt="logo"
+          className="h-[40px] md:h-[80px] lg:h-[120px] mt-[20px]"
+        />
+
+        <h2 className="font-semibold text-[2em] md:text-[3em] lg:text-[4em]">
+          Chat App
+        </h2>
       </div>
-      <div className={`${style.box} mt-[-320px]`}>
+      <div
+        ref={itemLogin}
+        className={`${style.box} translate-x-[-500px] opacity-0 transition-all ease-in-out duration-[2s]`}
+      >
         <form>
           <h1 className="font-semibold text-[2em]">User</h1>
           <div className={style.inputBox}>

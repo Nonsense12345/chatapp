@@ -136,15 +136,15 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     closePopup();
   };
   return (
-    <div className="w-4/5 my-[10px]">
-      <button
+    <div className="mt-[10px] text-[1.2em]">
+      <div
         onClick={() => {
           connectWebSocket();
           togglePopup();
         }}
       >
-        Join Voice Chat Room
-      </button>
+        Join Voice Chat
+      </div>
 
       {open && (
         <div
