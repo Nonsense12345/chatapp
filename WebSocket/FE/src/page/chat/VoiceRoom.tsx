@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 interface VoiceRoomProps {
   UserName: string;
   Photo: string;
@@ -9,6 +9,8 @@ interface User {
 }
 const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
   const [open, setOpen] = useState(false);
+  const userRef = useRef<User[]>([]);
+  const [user, SetUser] = useState<User[]>([]);
 
   const togglePopup = () => {
     setOpen(!open);
@@ -17,7 +19,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     setOpen(false);
   };
   // const [VoiceWebSocket, setVoiceWebSocket] = useState<WebSocket | null>(null);
-  const [user, SetUser] = useState<User[]>([]);
+
   const readBlobAsBase64 = (blob: Blob) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -37,15 +39,16 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
       try {
         const data = JSON.parse(event.data);
 
-        if (user?.every((item) => item.username != data.username)) {
-          console.log(data.username, data.photo);
-          SetUser((prevUser) => [
-            ...(prevUser || []),
-            {
-              username: data.username,
-              photo: data.photo,
-            },
-          ]);
+        if (!userRef.current?.some((item) => item.username == data.username)) {
+          //console.log(data.username, data.photo);
+          const newUser = {
+            username: data.username,
+            photo: data.photo,
+          };
+
+          userRef.current = [...userRef.current, newUser];
+          SetUser(userRef.current);
+          console.log(userRef.current);
         }
 
         const audioBlob = new Blob(
@@ -131,9 +134,10 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
       >
         Join Voice Chat Room
       </button>
+
       {open && (
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-screen w-full z-50"
           id="popupContainer"
         >
           <div className="relative top-20 mx-auto p-5 border  shadow-lg rounded-md bg-white">
@@ -145,16 +149,21 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
             <div className="mt-2">
               <p className="text-gray-700">User</p>
               <ul>
-                {user?.map((item) => (
-                  <div>
-                    <li key={item.username} className="flex items-center mt-2">
-                      <img
-                        src={item.photo}
-                        alt="User"
-                        className="w-8 h-8 rounded-full mr-2"
+                {user.map((item) => (
+                  <div key={item.username} className="flex items-center mt-2">
+                    <img
+                      src={item.photo}
+                      alt="User"
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                    <span>
+                      <h2 className="text-gray-700">{item.username}</h2>
+                    </span>
+                    {user[user.length - 1].username == item.username && (
+                      <div
+                        className={`w-3 h-3 bg-green-500 rounded-full ml-2 animate-pulse`}
                       />
-                      <span>{item.username}</span>
-                    </li>
+                    )}
                   </div>
                 ))}
               </ul>
