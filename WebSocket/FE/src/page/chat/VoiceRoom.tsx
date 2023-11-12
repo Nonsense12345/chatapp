@@ -12,9 +12,12 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
   const [open, setOpen] = useState(false);
   const userRef = useRef<User[]>([]);
   const [user, SetUser] = useState<User[]>([]);
-  const [VoiceWebSocket, setVoiceWebSocket] = useState<boolean>(false);
+  const VoiceWebSocket = useRef<WebSocket>(
+    new WebSocket("wss://chat.catim.pp.ua/voicechat")
+  );
 
   const togglePopup = () => {
+    // const [isClose, setIsClose] = useState(false);
     setOpen(!open);
   };
   const closePopup = () => {
@@ -29,12 +32,8 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
       reader.readAsDataURL(blob);
     });
   const connectWebSocket = () => {
-    const ws = new WebSocket("wss://chat.catim.pp.ua/voicechat");
-    if (VoiceWebSocket) {
-      console.log(123);
+    const ws = VoiceWebSocket.current;
 
-      ws.close();
-    }
     ws.onopen = () => {
       console.log("Kết nối WebSocket đã mở.");
 
@@ -131,7 +130,10 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
       }, 3000);
     });
   };
-
+  const handleCloseWs = () => {
+    VoiceWebSocket.current.close();
+    closePopup();
+  };
   return (
     <div>
       <button
@@ -179,7 +181,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
             <div className="flex justify-end mt-4">
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded hover:opacity-80"
-                onClick={() => setVoiceWebSocket(true)}
+                onClick={() => handleCloseWs()}
               >
                 Stop VoiceChat
               </button>
