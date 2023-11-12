@@ -8,4 +8,6 @@ FE
 2. npm run dev
 
 cd .\chatapp\WebSocket\BE\socket
-BE: go run server.go
+
+BE: 
+go run server.go
