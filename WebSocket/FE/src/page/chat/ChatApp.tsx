@@ -410,7 +410,7 @@ const ChatApp = () => {
               </div>
             </div>
           </div>
-          <div className="w-full mt-[80px] md:mt-[20px] flex justify-center h-[80vh] flex-col items-center ">
+          <div className="w-full mt-[40px] md:mt-[20px] flex justify-center h-[80vh] flex-col items-center ">
             <div className="my-[10px] text-[1.2em]">Thành Viên Online</div>
             <div className="h-[60px] w-4/5 mb-4 shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] rounded-full flex justify-center items-center">
               {listUserOnline && listUserOnline.length > 0 ? (
@@ -467,7 +467,7 @@ const ChatApp = () => {
               <VoiceRoom UserName={UserName} Photo={photoImg} />
             </div>
             <div
-              className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full`}
+              className={`w-4/5  rounded-lg shadow-[0px_0px_50px_-20px_rgba(0,0,0,0.8)] border-separate h-full overflow-hidden mt-[10px]`}
             >
               <div className="h-[80%] overflow-auto" id="scrollbar">
                 {messages &&

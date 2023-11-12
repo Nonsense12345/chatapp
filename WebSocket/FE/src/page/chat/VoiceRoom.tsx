@@ -136,7 +136,7 @@ const VoiceRoom = ({ UserName, Photo }: VoiceRoomProps) => {
     closePopup();
   };
   return (
-    <div className="w-4/5">
+    <div className="w-4/5 my-[10px]">
       <button
         onClick={() => {
           connectWebSocket();
